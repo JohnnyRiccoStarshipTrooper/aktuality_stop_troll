@@ -1,3 +1,6 @@
+//
+// Cieľom trolla je provokovať iných používateľov. To najlepšie, čo môžete urobiť, že na jeho komentáre nebudete reagovať.
+//
 // ==UserScript==
 // @name         Blokovanie trollov na aktuality.sk
 // @namespace    http://tampermonkey.net/
