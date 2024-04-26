@@ -1,39 +1,87 @@
 //
-// Cieľom trolla je provokovať iných používateľov. To najlepšie, čo môžete urobiť, že na jeho komentáre nebudete reagovať.
+// Cieľom trolla je provokovať iných používateľov. To najlepšie, čo môžete urobiť, že na jeho komentáre nebudete reagovať.
 //
 // ==UserScript==
 // @name         Blokovanie trollov na aktuality.sk
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       StarshipTrooper
 // @match        https://www.aktuality.sk/diskusia/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=aktuality.sk
 // @grant        none
+// @x-require      http://code.jquery.com/jquery-3.4.1.min.js
 // ==/UserScript==
+
+/* global $ */
 
 (function() {
     'use strict';
-    var trolls = [
-        'Brauch_keine_Frau_nur_Vaselin',
-        'Kolt a Meirová',
-        'Kolt_a_Meirová_02'
-    ];
+    var troll_messages = [];
+	var button_css = `
+		background-color:#cf2f32;
+		border:none;border-radius:4px;
+		font-size:12px;
+		font-weight:400;
+		box-shadow:0 16px 20px rgba(0,0,0,.1);
+		color:#fff;
+		cursor:pointer;
+		display:inline-block;
+		line-height:20px;
+		padding:5px 10px;
+		height:30px;
+		margin-left: 10px;
+	`;
 
+    $.each($("div.d-comment-wrapper"), function() {
+        var message_id =  $(this).attr("data-comment-id");
+        var user_id =  $(this).attr("data-azet_user_id");
+        var user_name =  $(this).find("span.username").text();
 
-    var trollsQuoted = trolls.map(name => '"'+name+'"');
-    var trollsCondition = trollsQuoted.join(' or .=');
-    function _x(STR_XPATH) {
-        var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
-        var xnodes = [];
-        var xres;
-        while (xres = xresult.iterateNext()) {
-            xnodes.push(xres);
+        $(this).parent().attr("data-comm_id",message_id);
+        $(this).parent().attr("data-user_id",user_id);
+        $(this).parent().attr("data-user_name",user_name);
+		$(this).find("div.d-body").addClass("hidden-msg");
+
+        //console.log("comm_id:"+message_id+" user_id:"+user_id+" user_name:"+user_name);
+	
+        // ban/unban button
+		if (localStorage.getItem("ban_user_"+user_id) === null) {
+            $(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="ban" data_user_id="`+user_id+`" onclick="javascript:localStorage.setItem('ban_user_`+user_id+`',1);location.reload();">BAN</span>`);
+        } else {
+			// author of message was banned
+            troll_messages.push(message_id);
+			$(this).find("div.user-img-wrapper").html(`<span style="font-size:30px;margin-left:10px;">&#129484;</span>`);
+            $(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="unban" data_user_id="`+user_id+`" onclick="javascript:localStorage.removeItem('ban_user_`+user_id+`');location.reload();">UNBAN</span>`);
+			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="" onclick="javascript:$(this).parent().parent().parent().parent().find('div.hidden-msg').toggle();">&#128065;</span>`);
+			$(this).css({"background":"#fcfcfa","margin-bottom":"2px"});
+			$(this).find("div.d-body").css("color","#877");
+			$(this).find("div.d-body").hide();
         }
-        return xnodes;
-    }
-
-    window.jQuery(_x('//*[contains(@class,"d-comment-wrapper") and .//*[contains(@class,"username") and (.=' + trollsCondition + ')]]')).find(("span.d-dislike" )).click();
-    window.jQuery(_x('//*[contains(@class,"d-comment-wrapper") and .//*[contains(@class,"username") and (.=' + trollsCondition + ')]]')).hide();
-
+    });
+    //console.log(troll_messages);
+    $.each(troll_messages, function(index,value) {
+        var element = $("div.d-anchor-wrapper[data-comm_id='"+value+"']");
+        //console.log("hide message: "+value);
+        //console.log("div.d-anchor-wrapper[data-comm_id='"+value+"']");
+        setTimeout(
+            function() {
+				var disliked_messages = JSON.parse(localStorage.getItem("disliked_messages") || "[]");
+				var msg_idx = disliked_messages.indexOf(value);
+				console.log("hladanie: "+msg_idx);
+				if (msg_idx === -1) {
+					//console.log("save to localstorage: "+value);
+					disliked_messages.push(value);
+					if (disliked_messages.length > 500) {
+						disliked_messages.shift();
+					}
+					localStorage.setItem("disliked_messages", JSON.stringify(disliked_messages));
+					element.find("span.d-dislike").click();
+					element.find("span.d-dislike").css("color","#822");
+				}
+				element.find("span.d-dislike").css("background","#ff8");
+            },
+            (index*1500)
+        );
+    });
 })();
