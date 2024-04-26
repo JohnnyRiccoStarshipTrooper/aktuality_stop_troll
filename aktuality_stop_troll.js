@@ -80,7 +80,7 @@
 				}
 				element.find("span.d-dislike").css("background","#ff8");
 			},
-			(index*1500)
+			(index*500)
 		);
 	});
 })();
