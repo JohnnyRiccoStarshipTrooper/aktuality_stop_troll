@@ -68,7 +68,6 @@
 			function() {
 				var disliked_messages = JSON.parse(localStorage.getItem("disliked_messages") || "[]");
 				var msg_idx = disliked_messages.indexOf(value);
-				console.log("hladanie: "+msg_idx);
 				if (msg_idx === -1) {
 					//console.log("save to localstorage: "+value);
 					disliked_messages.push(value);
