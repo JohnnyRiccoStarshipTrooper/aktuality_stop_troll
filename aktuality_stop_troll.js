@@ -43,33 +43,26 @@
 		$(this).parent().attr("data-user_name",user_name);
 		$(this).find("div.d-body").addClass("hidden-msg");
 
-		//console.log("comm_id:"+message_id+" user_id:"+user_id+" user_name:"+user_name);
-
 		// ban/unban button
 		if (localStorage.getItem("ban_user_"+user_id) === null) {
-			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="ban" data_user_id="`+user_id+`" onclick="javascript:localStorage.setItem('ban_user_`+user_id+`',1);location.reload();">BAN</span>`);
+			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="ban" onclick="javascript:localStorage.setItem('ban_user_`+user_id+`',1);location.reload();">BAN</span>`);
 		} else {
-			// author of message was banned
 			troll_messages.push(message_id);
 			$(this).find("div.user-img-wrapper").html(`<span style="font-size:30px;margin-left:10px;">&#129484;</span>`);
-			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="unban" data_user_id="`+user_id+`" onclick="javascript:localStorage.removeItem('ban_user_`+user_id+`');location.reload();">UNBAN</span>`);
-			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" class="" onclick="javascript:$(this).parent().parent().parent().parent().find('div.hidden-msg').toggle();">&#128065;</span>`);
+			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" onclick="javascript:localStorage.removeItem('ban_user_`+user_id+`');location.reload();">UNBAN</span>`);
+			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" onclick="javascript:$(this).parent().parent().parent().parent().find('div.hidden-msg').toggle();">&#128065;</span>`);
 			$(this).css({"background":"#fcfcfa","margin-bottom":"2px"});
 			$(this).find("div.d-body").css("color","#877");
 			$(this).find("div.d-body").hide();
 		}
 	});
-	//console.log(troll_messages);
 	$.each(troll_messages, function(index,value) {
 		var element = $("div.d-anchor-wrapper[data-comm_id='"+value+"']");
-		//console.log("hide message: "+value);
-		//console.log("div.d-anchor-wrapper[data-comm_id='"+value+"']");
 		setTimeout(
 			function() {
 				var disliked_messages = JSON.parse(localStorage.getItem("disliked_messages") || "[]");
 				var msg_idx = disliked_messages.indexOf(value);
 				if (msg_idx === -1) {
-					//console.log("save to localstorage: "+value);
 					disliked_messages.push(value);
 					if (disliked_messages.length > 500) {
 						disliked_messages.shift();
