@@ -36,7 +36,7 @@
 	$.each($("div.d-comment-wrapper"), function() {
 		var message_id = $(this).attr("data-comment-id");
 		var user_id = $(this).attr("data-azet_user_id");
-		var user_name = $(this).find("span.username").text();
+		//var user_name = $(this).find("span.username").text();
 
 		$(this).parent().attr("data-comm_id",message_id);
 		$(this).parent().attr("data-user_id",user_id);
