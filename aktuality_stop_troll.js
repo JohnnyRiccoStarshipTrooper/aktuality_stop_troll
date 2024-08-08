@@ -4,7 +4,7 @@
 // ==UserScript==
 // @name         Blokovanie trollov na aktuality.sk
 // @namespace    http://tampermonkey.net/
-// @version      0.31
+// @version      0.32
 // @description  try to take over the world!
 // @author       StarshipTrooper
 // @match        https://www.aktuality.sk/diskusia/*
@@ -48,7 +48,7 @@
 		} else {
 			troll_messages.push(message_id);
 			$(this).find("div.user-img-wrapper").html(`<span style="font-size:30px;">&#129484;</span>`);
-            $(this).find("div.user-img-wrapper").css({"width":"52px","text-align":"center"});
+            		$(this).find("div.user-img-wrapper").css({"width":"52px","text-align":"center"});
 			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" onclick="javascript:localStorage.removeItem('ban_user_`+user_id+`');location.reload();">UNBAN</span>`);
 			$(this).find("div.d-buttons").append(`<span style="`+button_css+`" onclick="javascript:$(this).parent().parent().parent().parent().find('div.d-body').toggle();">&#128065;</span>`);
 			$(this).css({"background":"#fcfcfa","margin-bottom":"2px"});
@@ -73,7 +73,7 @@
 				}
 				element.find("span.d-dislike").css("background","#ff8");
 			},
-			(index*500)
+			(index*800)
 		);
 	});
 })();
