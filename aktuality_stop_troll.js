@@ -4,7 +4,7 @@
 // ==UserScript==
 // @name         Blokovanie trollov na aktuality.sk
 // @namespace    http://tampermonkey.net/
-// @version      2024-11-04
+// @version      2025-05-28
 // @description  try to take over the world!
 // @author       StarshipTrooper
 // @match        https://www.aktuality.sk/diskusia/*
@@ -69,7 +69,7 @@
 					}
 					element.find("span.d-dislike").css("background","#ff8");
 				},
-				(index*800)
+				((1+index)*800)
 			);
 		});
 	} else {
